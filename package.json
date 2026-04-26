@@ -1,0 +1,65 @@
+{
+  "name": "lux-restaurante-desktop",
+  "version": "0.1.0",
+  "description": "Lux Restaurante — Gestor de pedidos para PC",
+  "main": "dist/main.js",
+  "private": true,
+  "scripts": {
+    "build": "esbuild electron/main.ts electron/preload.ts --bundle --platform=node --target=node18 --external:electron --outdir=dist",
+    "dev": "npm run build && electron .",
+    "dist:win": "npm run build && electron-builder --win --x64 --publish=never",
+    "dist:winmac": "npm run build && electron-builder -mw --publish=never"
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.0",
+    "node-thermal-printer": "^4.4.5"
+  },
+  "devDependencies": {
+    "@types/node": "^22.16.5",
+    "electron": "^33.0.0",
+    "electron-builder": "^25.1.8",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.8.3"
+  },
+  "build": {
+    "appId": "com.deliverylux.restaurante",
+    "productName": "Lux Restaurante",
+    "copyright": "© 2026 Delivery Lux",
+    "directories": {
+      "buildResources": "build",
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "build/icon.ico",
+      "build/icon.png",
+      "build/sounds/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "build/icon.ico",
+      "publisherName": "Delivery Lux"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Lux Restaurante"
+    },
+    "mac": {
+      "target": [{ "target": "dmg", "arch": ["arm64", "x64"] }],
+      "icon": "build/icon.png",
+      "category": "public.app-category.business"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "guisgao",
+      "repo": "lux-restaurante-desktop",
+      "private": false,
+      "releaseType": "release"
+    }
+  }
+}
