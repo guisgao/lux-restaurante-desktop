@@ -27,21 +27,38 @@ export interface PrintablePedido {
   endereco?: string;
   observacaoEntregador?: string;
   restauranteNome?: string;
+  // Config dinâmica vinda da tela /restaurante-admin/configuracoes
+  config?: {
+    interfaceName?: string;
+    papel?: "58mm" | "80mm";
+    tipo?: "epson" | "star" | "tanca" | "daruma";
+  };
 }
 
 const fallbackInterface = process.env.LUX_PRINTER_INTERFACE || "printer:auto";
+
+const TIPO_MAP = {
+  epson: PrinterTypes.EPSON,
+  star: PrinterTypes.STAR,
+  tanca: PrinterTypes.TANCA,
+  daruma: PrinterTypes.DARUMA,
+} as const;
 
 function brl(v: number) {
   return `R$ ${v.toFixed(2).replace(".", ",")}`;
 }
 
 export async function printOrder(p: PrintablePedido): Promise<void> {
+  const printerType = p.config?.tipo ? TIPO_MAP[p.config.tipo] : PrinterTypes.EPSON;
+  const printerInterface = p.config?.interfaceName || fallbackInterface;
+  const width = p.config?.papel === "58mm" ? 32 : 48;
+
   const printer = new ThermalPrinter({
-    type: PrinterTypes.EPSON, // Bematech/Daruma/Elgin geralmente compatíveis com EPSON ESC/POS
-    interface: fallbackInterface,
+    type: printerType,
+    interface: printerInterface,
     characterSet: CharacterSet.PC860_PORTUGUESE,
     removeSpecialCharacters: false,
-    width: 48,
+    width,
     options: { timeout: 5000 },
   });
 

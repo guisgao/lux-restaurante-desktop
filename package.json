@@ -1,6 +1,6 @@
 {
   "name": "lux-restaurante-desktop",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Lux Restaurante — Gestor de pedidos para PC",
   "main": "dist/main.js",
   "private": true,
