@@ -33,11 +33,14 @@ let isQuitting = false;
 let pendingOrders = 0;
 
 function createWindow() {
+  // Em notebooks 1366x768 com DPI scale 125% o "viewport útil" fica ~1093x550 — abrimos
+  // maximizado por padrão pro restaurante ter o painel ocupando a tela toda.
   mainWindow = new BrowserWindow({
-    width: 1280,
+    width: 1366,
     height: 800,
-    minWidth: 1024,
-    minHeight: 640,
+    minWidth: 900,
+    minHeight: 600,
+    show: false, // mostra só depois de maximizar pra evitar flash
     title: "Lux Restaurante",
     icon: ICON_PATH,
     backgroundColor: "#0A0A0A",
@@ -47,7 +50,18 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: false,
+      // zoomFactor evita ficar minúsculo em telas com DPI scale alto
+      zoomFactor: 1.0,
     },
+  });
+
+  mainWindow.maximize();
+  mainWindow.show();
+
+  // Garante que o conteúdo recebe foco e o zoom não é alterado por gesto
+  mainWindow.webContents.on("did-finish-load", () => {
+    mainWindow?.webContents.setZoomFactor(1.0);
+    mainWindow?.webContents.setVisualZoomLevelLimits(1, 1);
   });
 
   mainWindow.loadURL(APP_URL);
